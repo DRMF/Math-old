@@ -6,6 +6,9 @@ CREATE TABLE /*_*/math (
   -- Binary MD5 hash of the latex fragment, used as an identifier key.
   math_inputhash varbinary(16) NOT NULL,
 
+  -- Plain-text human-readable label, if any
+  math_label varchar(32) UNIQUE,
+
   -- Not sure what this is, exactly...
   math_outputhash varbinary(16) NOT NULL,
 

@@ -36,6 +36,7 @@ abstract class MathRenderer {
 	protected $mathml = '';
 	protected $conservativeness = 0;
 	protected $params = '';
+	protected $label = '';
 	protected $changed = false;
 	/**
 	 * @var boolean forces rerendering if set to true
@@ -52,6 +53,7 @@ abstract class MathRenderer {
 	 */
 	public function __construct( $tex = '', $params = array() ) {
 		$this->tex = $tex;
+		$this->label = $params->label;
 		$this->params = $params;
 	}
 
@@ -174,6 +176,7 @@ abstract class MathRenderer {
 		$this->conservativeness = $rpage->math_html_conservativeness;
 		$this->html = $rpage->math_html;
 		$this->mathml = utf8_decode( $rpage->math_mathml );
+		$this->label = $rpage->math_label;
 		$this->storedInDatabase = true;
 	}
 
@@ -181,7 +184,7 @@ abstract class MathRenderer {
 	 * @return array with the database column names
 	 */
 	private function dbInArray() {
-		return array( 'math_inputhash', 'math_outputhash', 'math_html_conservativeness', 'math_html',
+		return array( 'math_inputhash', 'math_label', 'math_outputhash', 'math_html_conservativeness', 'math_html',
 				'math_mathml' );
 	}
 	/**
@@ -221,7 +224,8 @@ abstract class MathRenderer {
 		}
 		$out = array( 'math_inputhash' => $this->getInputHash(), 'math_outputhash' => $outmd5_sql,
 				'math_html_conservativeness' => $this->conservativeness, 'math_html' => $this->html,
-				'math_mathml' => utf8_encode( $this->mathml ) );
+				'math_mathml' => utf8_encode( $this->mathml ),
+				'math_label' => $this->label );
 		wfDebugLog( "Math", "Store Data:" . var_export( $out, true ) . "\n\n" );
 		return $out;
 	}
@@ -287,6 +291,25 @@ abstract class MathRenderer {
 		$this->changed = true;
 		$this->tex = $tex;
 	}
+
+	/**
+	 * Gets Label
+	 *
+	 * @return string Label
+	 */
+	public function getLabel() {
+		return $this->label;
+	}
+	/**
+	 * Sets the Label
+	 *
+	 * @param string $label
+	 */
+	public function setLabel( $label ) {
+		$this->changed = true;
+		$this->label = $label;
+	}
+
 
 	/**
 	 * Get the hash calculated by texvc
