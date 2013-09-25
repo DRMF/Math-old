@@ -152,6 +152,28 @@ $wgAutoloadClasses['MathSource'] = $dir . 'MathSource.php';
 $wgAutoloadClasses['MathLaTeXML'] = $dir . 'MathLaTeXML.php';
 $wgExtensionMessagesFiles['Math'] = $dir . 'Math.i18n.php';
 
+// Hook into EditPage::showEditForm:initial to modify the edit page.
+$wgHooks[ 'EditPage::showEditForm:initial' ][] = 'formulaTemplate';
+function formulaTemplate($editPage) {
+	global $wgTitle,$wgOut;
+	# Only for new pages
+	if ($wgTitle->exists( $wgTitle->getArticleID() ) ) { return true; }
+	# Only for formula pages
+	if (! preg_match("/^Formula\:(.+)$/", $wgTitle,$label)) { return true; }
+
+	$dbr = wfGetDB( DB_SLAVE );
+	$rpage = $dbr->selectRow( 'math', array('math_tex'),
+			array( 'math_label' => $label[1] ), __METHOD__ );
+
+	$content = "== Formula ==\n <math>".$rpage->math_tex."</math> \n\n";
+	$content .= "== Proof ==\n\n";
+	$content .= "== Properties ==\n\n";
+	$editPage->textbox1 = $content;
+	
+	return true;
+}
+
+
 $wgParserTestFiles[] = $dir . 'mathParserTests.txt';
 
 $moduleTemplate = array(

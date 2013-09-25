@@ -53,7 +53,9 @@ abstract class MathRenderer {
 	 */
 	public function __construct( $tex = '', $params = array() ) {
 		$this->tex = $tex;
-		$this->label = $params->label;
+		if ($params) {
+			$this->label = $params["label"];
+		}
 		$this->params = $params;
 	}
 
@@ -177,6 +179,7 @@ abstract class MathRenderer {
 		$this->html = $rpage->math_html;
 		$this->mathml = utf8_decode( $rpage->math_mathml );
 		$this->label = $rpage->math_label;
+		// $this->tex = $rpage->math_tex;
 		$this->storedInDatabase = true;
 	}
 
@@ -225,6 +228,7 @@ abstract class MathRenderer {
 		$out = array( 'math_inputhash' => $this->getInputHash(), 'math_outputhash' => $outmd5_sql,
 				'math_html_conservativeness' => $this->conservativeness, 'math_html' => $this->html,
 				'math_mathml' => utf8_encode( $this->mathml ),
+				'math_tex' => $this->tex,
 				'math_label' => $this->label );
 		wfDebugLog( "Math", "Store Data:" . var_export( $out, true ) . "\n\n" );
 		return $out;

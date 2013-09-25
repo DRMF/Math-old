@@ -250,17 +250,31 @@ class MathLaTeXML extends MathRenderer {
 	 * @return html element with rendered math
 	 */
 	private function getMathMLTag() {
-		return self::embedMathML( $this->getMathml(), urldecode( $this->getTex() ) );
+		return self::embedMathML( $this->getMathml(), $this->getLabel(), urldecode( $this->getTex() ) );
 	}
 
 	/**
 	 * Embeds the MathML-XML element in a HTML span element with class tex
 	 * @param string $mml: the MathML string
+	 * @param string $label: the MathML label (optional)
 	 * @param string $tagId: optional tagID for references like (pagename#equation2)
 	 * @return html element with rendered math
 	 */
-	public static function embedMathML( $mml, $tagId = '', $attribs = false ) {
+	public static function embedMathML( $mml, $label, $tagId = '', $attribs = false ) {
 		$mml = str_replace( "\n", " ", $mml );
+		if (! empty($label)) {
+			if (self::hasFormulaPage($label)) {
+				# Blue link
+				$link_attribs = array('title'=>"Formula:".$label,'href'=>'/index.php?title=Formula:'.$label);
+			} else {
+				# Red link
+				$link_attribs = array('class'=>'new','title'=>"Formula:".$label,'href'=>'/index.php?title=Formula:'.$label.'&action=edit&redlink=1');
+			}
+			if ( $tagId ) {
+					$link_attribs['id'] = $tagId;
+			}
+			return Xml::tags('a',$link_attribs, $mml);
+		}		
 		if ( ! $attribs ) {
 			$attribs = array( 'class' => 'tex', 'dir' => 'ltr' );
 			if ( $tagId ) {
@@ -271,4 +285,13 @@ class MathLaTeXML extends MathRenderer {
 		return Xml::tags( 'span', $attribs, $mml );
 	}
 
+	public function hasFormulaPage($label) {
+		$dbr = wfGetDB( DB_SLAVE );
+		$rpage = $dbr->selectRow( 'page', array('page_title'),
+			array( 'page_title' => 'Formula:'.$label ), __METHOD__ );
+		if ($rpage != false) {
+			return true; }
+		else { return false; }
+	}
 }
+
