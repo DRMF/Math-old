@@ -165,10 +165,10 @@ function formulaTemplate($editPage) {
 	$rpage = $dbr->selectRow( 'math', array('math_tex'),
 			array( 'math_label' => $label[1] ), __METHOD__ );
 
-	$content = "== Formula ==\n\n<math>".$rpage->math_tex."</math>\n\n";
-	$content .= "== Proof ==\n\n";
-	$content .= "== Properties ==\n\n";
-	$editPage->textbox1 = $content;
+	$content = "== Formula ==\n\n\n<math>".$rpage->math_tex."</math>\n\n";
+	$content .= "== Proof ==\n\n\n";
+	$content .= "== Properties ==\n\n\n";
+	$editPage->textbox1 .= $content;
 	
 	return true;
 }
