@@ -54,7 +54,8 @@ abstract class MathRenderer {
 	public function __construct( $tex = '', $params = array() ) {
 		$this->tex = $tex;
 		if ($params) {
-			$this->label = $params["label"];
+		   	# Label needs to be URL-encoded
+			$this->label = urlencode($params["label"]);
 		}
 		$this->params = $params;
 	}
