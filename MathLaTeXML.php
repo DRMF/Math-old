@@ -261,14 +261,15 @@ class MathLaTeXML extends MathRenderer {
 	 * @return html element with rendered math
 	 */
 	public static function embedMathML( $mml, $label, $tagId = '', $attribs = false ) {
+		global $wgScriptPath;
 		$mml = str_replace( "\n", " ", $mml );
 		if (! empty($label)) {
 			if (self::hasFormulaPage($label)) {
 				# Blue link
-				$link_attribs = array('title'=>"Formula:".$label,'href'=>'/index.php?title=Formula:'.$label);
+				$link_attribs = array('title'=>"Formula:".$label,'href'=>$wgScriptPath.'/index.php?title=Formula:'.$label);
 			} else {
 				# Red link
-				$link_attribs = array('class'=>'new','title'=>"Formula:".$label,'href'=>'/index.php?title=Formula:'.$label.'&action=edit&redlink=1');
+				$link_attribs = array('class'=>'new','title'=>"Formula:".$label,'href'=>$wgScriptPath.'/index.php?title=Formula:'.$label.'&action=edit&redlink=1');
 			}
 			if ( $tagId ) {
 					$link_attribs['id'] = $tagId;
